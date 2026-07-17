@@ -4,7 +4,8 @@
   "description": "Electron computer-use chatbot driving cx/gpt-5.5 via local 9router (mac/win desktop + android via adb)",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "package:win": "electron-packager . cua-electron --platform=win32 --arch=x64 --out=dist --overwrite --ignore=\"^/dist\" --ignore=\"^/.github\""
   },
   "author": "",
   "license": "MIT",
@@ -13,6 +14,7 @@
     "dotenv": "^16.4.5"
   },
   "devDependencies": {
+    "@electron/packager": "^18.3.6",
     "electron": "^30.0.0"
   }
 }

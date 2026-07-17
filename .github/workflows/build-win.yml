@@ -1,0 +1,29 @@
+name: build-win
+on: [workflow_dispatch, push]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install deps (Windows ABI)
+        run: npm install
+      - name: Package Windows app
+        run: npm run package:win
+      - name: Zip
+        run: Compress-Archive -Path dist/cua-electron-win32-x64 -DestinationPath cua-electron-win-x64.zip -Force
+      - name: SHA256
+        run: |
+          $h = (Get-FileHash cua-electron-win-x64.zip -Algorithm SHA256).Hash.ToLower()
+          $sz = (Get-Item cua-electron-win-x64.zip).Length
+          Write-Output "ARTIFACT_SHA256 $h"
+          Write-Output "ARTIFACT_BYTES $sz"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cua-electron-win-x64
+          path: cua-electron-win-x64.zip
+          if-no-files-found: error
