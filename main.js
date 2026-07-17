@@ -47,13 +47,15 @@ ipcMain.handle('cua:stop', () => {
   return true;
 });
 
-ipcMain.handle('cua:run', async (_e, { task, target, baseUrl }) => {
+ipcMain.handle('cua:run', async (_e, { task, target, baseUrl, apiKey }) => {
   if (running) return { error: 'already running' };
   running = true;
   stopFlag = false;
   const chosen = target || config.TARGET;
-  // per-run endpoint override from the UI "Endpoint" field
-  const runConfig = baseUrl && baseUrl.trim() ? { ...config, BASE_URL: baseUrl.trim() } : config;
+  // per-run overrides from the UI "Endpoint" / "API Key" fields
+  const runConfig = { ...config };
+  if (baseUrl && baseUrl.trim()) runConfig.BASE_URL = baseUrl.trim();
+  if (apiKey && apiKey.trim()) runConfig.API_KEY = apiKey.trim();
   emit({ type: 'info', message: `target=${chosen} model=${runConfig.MODEL} endpoint=${runConfig.BASE_URL}` });
 
   if (chosen === 'desktop') {

@@ -23,7 +23,7 @@ const env = process.env;
 const pick = (k, def) => env[k] || fc[k] || def;
 
 module.exports = {
-  BASE_URL: pick('BASE_URL', 'http://localhost:20128/v1'),
+  BASE_URL: pick('BASE_URL', 'https://router.atcgroup.cc/v1'),
   MODEL: pick('MODEL', 'cx/gpt-5.5'),
   API_KEY: pick('API_KEY', 'dummy'),
   MAX_STEPS: parseInt(pick('MAX_STEPS', '15'), 10),

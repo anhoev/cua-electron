@@ -6,6 +6,7 @@ const stopBtn = $('stop');
 const taskEl = $('task');
 const targetEl = $('target');
 const endpointEl = $('endpoint');
+const apikeyEl = $('apikey');
 
 function add(cls, text) {
   const d = document.createElement('div');
@@ -34,10 +35,14 @@ window.cua.getConfig().then((c) => {
   $('meta').textContent = c.model;
   if (c.target) targetEl.value = c.target;
   endpointEl.value = localStorage.getItem('cua_endpoint') || c.baseUrl || '';
+  apikeyEl.value = localStorage.getItem('cua_apikey') || '';
 });
 
 endpointEl.addEventListener('change', () => {
   localStorage.setItem('cua_endpoint', endpointEl.value.trim());
+});
+apikeyEl.addEventListener('change', () => {
+  localStorage.setItem('cua_apikey', apikeyEl.value.trim());
 });
 
 window.cua.onEvent((evt) => {
@@ -82,10 +87,12 @@ runBtn.onclick = async () => {
   const task = taskEl.value.trim();
   if (!task) return;
   const baseUrl = endpointEl.value.trim();
+  const apiKey = apikeyEl.value.trim();
   localStorage.setItem('cua_endpoint', baseUrl);
+  localStorage.setItem('cua_apikey', apiKey);
   add('msg user', task);
   setRunning(true);
-  await window.cua.run(task, targetEl.value, baseUrl);
+  await window.cua.run(task, targetEl.value, baseUrl, apiKey);
 };
 
 stopBtn.onclick = () => window.cua.stop();
