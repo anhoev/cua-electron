@@ -6,6 +6,9 @@ can control an **Android** phone over ADB by switching the target dropdown.
 
 Model calls go to your local **9router**: `http://localhost:20128/v1`, model `cx/gpt-5.5`.
 
+> **Want this feature in another app?** See [docs/INTEGRATION.md](docs/INTEGRATION.md) —
+> a copy-paste guide to add computer control (macOS + Windows) to any Electron/Node app.
+
 ```
 main.js            Electron main + agent orchestration (IPC)
 agent.js           the vision→tool-call→act loop (endpoint-agnostic)
