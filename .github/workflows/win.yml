@@ -1,0 +1,18 @@
+name: win-verify
+on: [push, workflow_dispatch]
+
+jobs:
+  win:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install deps (Windows ABI)
+        run: npm install
+      - name: Real Windows execution (Electron + nut-js + desktopCapturer)
+        run: npx electron win-verify.js
+        env:
+          ELECTRON_ENABLE_LOGGING: '1'
