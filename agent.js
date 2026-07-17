@@ -50,32 +50,41 @@ const SYSTEM_PROMPT = [
   '- When the task is complete, STOP calling the tool and reply with a short plain-text result.',
 ].join('\n');
 
-function callModel(messages, config) {
+async function callModel(messages, config) {
   const url = config.BASE_URL.replace(/\/+$/, '') + '/chat/completions';
-  return fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + (config.API_KEY || 'dummy'),
-    },
-    body: JSON.stringify({
-      model: config.MODEL,
-      max_tokens: config.MAX_TOKENS || 4000,
-      tools: [COMPUTER_TOOL],
-      tool_choice: 'auto',
-      messages,
-    }),
-  }).then(async (res) => {
-    const text = await res.text();
-    let json;
-    try {
-      json = JSON.parse(text);
-    } catch {
-      throw new Error('Non-JSON reply (' + res.status + '): ' + text.slice(0, 300));
-    }
-    if (!res.ok) throw new Error('Model HTTP ' + res.status + ': ' + text.slice(0, 300));
-    return json;
-  });
+  let res;
+  try {
+    res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + (config.API_KEY || 'dummy'),
+      },
+      body: JSON.stringify({
+        model: config.MODEL,
+        max_tokens: config.MAX_TOKENS || 4000,
+        tools: [COMPUTER_TOOL],
+        tool_choice: 'auto',
+        messages,
+      }),
+    });
+  } catch (e) {
+    const cause = (e && e.cause && (e.cause.code || e.cause.message)) || (e && e.message) || String(e);
+    throw new Error(
+      `Cannot reach model endpoint ${url} (${cause}). ` +
+      'Is the 9router / OpenAI-compatible server running and reachable from THIS machine? ' +
+      'Set the endpoint in the app\'s "Endpoint" field, or via BASE_URL in .env / cua-config.json next to the app.'
+    );
+  }
+  const text = await res.text();
+  let json;
+  try {
+    json = JSON.parse(text);
+  } catch {
+    throw new Error('Non-JSON reply (' + res.status + ') from ' + url + ': ' + text.slice(0, 300));
+  }
+  if (!res.ok) throw new Error('Model HTTP ' + res.status + ': ' + text.slice(0, 300));
+  return json;
 }
 
 // Keep only the newest screenshot as an actual image; replace older ones with a

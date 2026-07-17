@@ -35,6 +35,19 @@ config.js/.env     endpoint + tuning
 > `computer_use_preview` tool — the 9router codex backend rejects that tool type
 > (`Unsupported tool type: computer_use_preview`).
 
+## Endpoint (fix "fetch failed")
+
+The app talks to a 9router / OpenAI-compatible server. Default `http://localhost:20128/v1`.
+Running the app where that server is **not** local fails with `Cannot reach model endpoint …`.
+Point it at a reachable server, easiest first:
+
+1. **Endpoint field in the app** (persisted) — e.g. `http://192.168.1.20:20128/v1`.
+2. **`cua-config.json`** next to the executable: `{ "BASE_URL": "http://192.168.1.20:20128/v1" }`.
+3. **`.env`** in the app dir: `BASE_URL=http://192.168.1.20:20128/v1`.
+
+The server must be reachable from *this* machine — same LAN (server listening on `0.0.0.0`,
+not just `127.0.0.1`), a tunnel, or running locally.
+
 ## Run
 
 ```bash

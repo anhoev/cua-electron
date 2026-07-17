@@ -1,6 +1,6 @@
 {
   "name": "cua-electron",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Electron computer-use chatbot driving cx/gpt-5.5 via local 9router (mac/win desktop + android via adb)",
   "main": "main.js",
   "scripts": {

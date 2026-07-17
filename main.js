@@ -47,12 +47,14 @@ ipcMain.handle('cua:stop', () => {
   return true;
 });
 
-ipcMain.handle('cua:run', async (_e, { task, target }) => {
+ipcMain.handle('cua:run', async (_e, { task, target, baseUrl }) => {
   if (running) return { error: 'already running' };
   running = true;
   stopFlag = false;
   const chosen = target || config.TARGET;
-  emit({ type: 'info', message: `target=${chosen} model=${config.MODEL}` });
+  // per-run endpoint override from the UI "Endpoint" field
+  const runConfig = baseUrl && baseUrl.trim() ? { ...config, BASE_URL: baseUrl.trim() } : config;
+  emit({ type: 'info', message: `target=${chosen} model=${runConfig.MODEL} endpoint=${runConfig.BASE_URL}` });
 
   if (chosen === 'desktop') {
     const { checkMac, requestMissing } = require('./permissions');
@@ -74,12 +76,12 @@ ipcMain.handle('cua:run', async (_e, { task, target }) => {
   try {
     const createExecutor =
       chosen === 'android' ? require('./executors/android') : require('./executors/desktop');
-    const executor = await createExecutor(config);
+    const executor = await createExecutor(runConfig);
     if (executor.meta) emit({ type: 'info', message: 'executor: ' + JSON.stringify(executor.meta) });
     await runAgentLoop({
       task,
       executor,
-      config,
+      config: runConfig,
       onEvent: emit,
       shouldStop: () => stopFlag,
     });

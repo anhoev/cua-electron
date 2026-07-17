@@ -1,7 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('cua', {
-  run: (task, target) => ipcRenderer.invoke('cua:run', { task, target }),
+  run: (task, target, baseUrl) => ipcRenderer.invoke('cua:run', { task, target, baseUrl }),
   stop: () => ipcRenderer.invoke('cua:stop'),
   getConfig: () => ipcRenderer.invoke('cua:config'),
   onEvent: (cb) => {

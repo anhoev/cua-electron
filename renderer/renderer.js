@@ -5,6 +5,7 @@ const runBtn = $('run');
 const stopBtn = $('stop');
 const taskEl = $('task');
 const targetEl = $('target');
+const endpointEl = $('endpoint');
 
 function add(cls, text) {
   const d = document.createElement('div');
@@ -30,8 +31,13 @@ function setRunning(on) {
 }
 
 window.cua.getConfig().then((c) => {
-  $('meta').textContent = `${c.model} · ${c.baseUrl}`;
+  $('meta').textContent = c.model;
   if (c.target) targetEl.value = c.target;
+  endpointEl.value = localStorage.getItem('cua_endpoint') || c.baseUrl || '';
+});
+
+endpointEl.addEventListener('change', () => {
+  localStorage.setItem('cua_endpoint', endpointEl.value.trim());
 });
 
 window.cua.onEvent((evt) => {
@@ -75,9 +81,11 @@ function escapeArgs(args) {
 runBtn.onclick = async () => {
   const task = taskEl.value.trim();
   if (!task) return;
+  const baseUrl = endpointEl.value.trim();
+  localStorage.setItem('cua_endpoint', baseUrl);
   add('msg user', task);
   setRunning(true);
-  await window.cua.run(task, targetEl.value);
+  await window.cua.run(task, targetEl.value, baseUrl);
 };
 
 stopBtn.onclick = () => window.cua.stop();

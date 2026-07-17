@@ -31,6 +31,12 @@
     .step b { color: #7fd1ff; }
     .result { font-size: 11px; color: #6f7684; margin: 1px 0 6px 12px; font-family: ui-monospace, monospace; }
     footer { padding: 10px; background: #1b1e24; border-top: 1px solid #2a2e36; }
+    .settings { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .settings label { font-size: 11px; color: #8a92a0; }
+    .settings input {
+      flex: 1; background: #0e1013; color: #e6e8eb; border: 1px solid #2a2e36;
+      border-radius: 6px; padding: 5px 8px; font-size: 12px; font-family: ui-monospace, monospace;
+    }
     .row { display: flex; gap: 8px; align-items: flex-end; }
     textarea {
       flex: 1; resize: none; height: 54px; background: #0e1013; color: #e6e8eb;
@@ -58,6 +64,10 @@
   <div id="view"><div class="placeholder">no screenshot yet</div></div>
   <div id="log"></div>
   <footer>
+    <div class="settings">
+      <label for="endpoint">Endpoint</label>
+      <input id="endpoint" type="text" spellcheck="false" placeholder="http://localhost:20128/v1" />
+    </div>
     <div class="row">
       <textarea id="task" placeholder="e.g. Open Spotlight and search for Safari"></textarea>
       <div class="controls">
